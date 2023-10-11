@@ -194,6 +194,30 @@ def get_prompt(data: Dict[str, Any], **_: Dict[str, Any]) -> Any:
     """
     return data.get("prompt")
 
+def get_last_content_or_prompt(data: Dict[str, Any], **_: Dict[str, Any]) -> Any:
+    """get the prompt of the llm request params
+
+    :param data: the user llm request data
+    :type data: Dict[str, Any]
+
+    Example:
+        .. code-block:: python
+
+            from gptcache.processor.pre import get_last_content_or_prompt
+
+            content = get_last_content_or_prompt({"prompt": "foo"})
+            # "foo"
+    """
+    ret = data.get("messages")
+    if ret is None:
+        ret = data.get("prompt")
+        if ret is not None:
+            ret = "prompt: %s" % ret
+    else:
+        ret = ret[-1]["content"]
+        if ret is not None:
+            ret = "last_content: %s" % ret
+    return ret
 
 def get_file_name(data: Dict[str, Any], **_: Dict[str, Any]) -> str:
     """get the file name of the llm request params
